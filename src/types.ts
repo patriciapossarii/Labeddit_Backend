@@ -24,3 +24,37 @@ export interface TLoginRequest {
     password: string,
 }
 
+//===============================
+
+export interface TPostRequest {
+    content: string
+}
+
+export type TUserPost = {
+    id: string,
+    nickname: string
+}
+
+export interface PostWithUser {
+    id: string,
+    content: string,
+    likes: number,
+    dislikes: number,
+    comments:string,
+    createdAt: string,
+    updatedAt: string,
+    creator: TUserPost
+}
+
+
+export interface PostDB {
+    id_post: string,
+    id_creatorPost: string,
+    content_post: string,
+    likes_post: number,
+    dislikes_post: number,
+    comments_post:string,
+    updated_at: string,
+    created_at: string
+}
+

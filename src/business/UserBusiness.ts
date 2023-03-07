@@ -48,7 +48,7 @@ export class UserBusiness {
         if (expression.test(input.email) != true) {
             throw new BadRequestError("'email'do usuário em formato inválido. Ex.: 'exemplo@exemplo.com'.")
         }
-        console.log("===========================",input.email)
+        
         const emailExists = await this.userDatabase.checkEmailUserExist(input.email)
         if (emailExists.length >= 1) {
             throw new BadRequestError("'email' do usuário já existente.")
