@@ -50,12 +50,19 @@ VALUES
 	("f001", "Fulano", "fulano@email.com", "fulano123"),
 	("f002", "Beltrana", "beltrana@email.com", "beltrana00");
 
-    SELECT * FROM users;
+    SELECT * FROM posts;
+    SELECT * from likes_dislikes_post;
 
 
        UPDATE users
      SET role = "ADMIN"
-     WHERE id ="f001";
+     WHERE id ="a3aba438-90cf-4720-9905-ce09a54e531a";
+
+
+      UPDATE posts
+     SET likes_post = 0
+     WHERE id_post ="350845b4-79c5-45d8-a4c6-e8431c37433e";
+
 
      --DROP Table users;
 
