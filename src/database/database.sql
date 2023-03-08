@@ -13,7 +13,7 @@ CREATE TABLE posts(
     content_post TEXT NOT NULL,
     likes_post INTEGER DEFAULT (0) NOT NULL,
     dislikes_post INTEGER DEFAULT (0) NOT NULL,
-    comments_post TEXT NOT NULL,
+    comments_post INTEGER DEFAULT (0) NOT NULL,
     updated_at TEXT DEFAULT (DATETIME()) NOT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL,
     FOREIGN KEY (id_creatorPost) REFERENCES users(id)
@@ -32,6 +32,8 @@ CREATE TABLE comments(
     content_comment TEXT NOT NULL,
     likes_comment INTEGER DEFAULT (0) NOT NULL,
     dislikes_comment INTEGER DEFAULT (0) NOT NULL,
+    updated_at TEXT DEFAULT (DATETIME()) NOT NULL,
+    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
      FOREIGN KEY ( id_creatorComment) REFERENCES users(id),
      FOREIGN KEY ( id_postComment) REFERENCES posts(id_post)
 );
@@ -50,7 +52,7 @@ VALUES
 	("f001", "Fulano", "fulano@email.com", "fulano123"),
 	("f002", "Beltrana", "beltrana@email.com", "beltrana00");
 
-    SELECT * FROM posts;
+    SELECT * FROM users;
     SELECT * from likes_dislikes_post;
 
 
@@ -64,5 +66,12 @@ VALUES
      WHERE id_post ="350845b4-79c5-45d8-a4c6-e8431c37433e";
 
 
-     --DROP Table users;
+  --   DROP Table posts;
+
+--drop table comments;
+
+SELECT * FROM comments;
+SELECT * FROM posts;
+
+SELECT * FROM likes_dislikes_comment;
 

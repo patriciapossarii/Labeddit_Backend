@@ -24,7 +24,7 @@ export interface TLoginRequest {
     password: string,
 }
 
-//===============================
+//=============================== POST
 
 export interface TPostRequest {
     content: string
@@ -40,7 +40,7 @@ export interface PostWithUser {
     content: string,
     likes: number,
     dislikes: number,
-    comments:string,
+    comments:number,
     createdAt: string,
     updatedAt: string,
     creator: TUserPost
@@ -53,8 +53,28 @@ export interface PostDB {
     content_post: string,
     likes_post: number,
     dislikes_post: number,
-    comments_post:string,
+    comments_post:number,
     updated_at: string,
     created_at: string
 }
 
+
+//=============================== COMMENT
+
+
+
+export interface CommentDB {
+    id_comment: string,
+    id_creatorComment: string,
+    id_postComment: string,
+    content_comment:string,
+    likes_comment: number,
+    dislikes_comment:number,
+    updated_at: string,
+    created_at: string
+}
+
+
+export interface TCommenttRequest {
+    content: string
+}
