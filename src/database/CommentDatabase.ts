@@ -1,5 +1,6 @@
 import { CommentDB, PostDB } from "../types"
 import { BaseDatabase } from "./BaseDatabase"
+import { PostDatabase } from "./PostDatabase"
 
 export class CommentDatabase extends BaseDatabase {
     public static TABLE_COMMENTS = "comments"
@@ -24,7 +25,7 @@ export class CommentDatabase extends BaseDatabase {
     }
 
 
-    
+
     public async findCommentById(id: string | undefined): Promise<CommentDB> {
         const [result]: CommentDB[] = await BaseDatabase.connection(CommentDatabase.TABLE_COMMENTS)
             .where({ id_comment: id })
@@ -33,7 +34,7 @@ export class CommentDatabase extends BaseDatabase {
 
     public async removeLikeDislike(userId: string, commentId: string) {
         const result = await BaseDatabase.connection(CommentDatabase.TABLE_LIKES_DISLIKES_COMMENT)
-            .delete().where({ id_user: userId,id_comment: commentId })
+            .delete().where({ id_user: userId, id_comment: commentId })
         return result
     }
 
@@ -52,18 +53,27 @@ export class CommentDatabase extends BaseDatabase {
 
     public async updatetLikeDislike(value: number, userId: string, commentId: string) {
         const result = await BaseDatabase.connection(CommentDatabase.TABLE_LIKES_DISLIKES_COMMENT)
-            .update({  like_comment: value }).where({ id_user: userId, id_comment: commentId })
+            .update({ like_comment: value }).where({ id_user: userId, id_comment: commentId })
         return result
     }
 
-/*
-    public async InsertCommentInPost(userId: string, postId: string) {
-        const result = await BaseDatabase.connection(CommentDatabase.TABLE_POSTS)
-            .insert({ content_comment: value }).where({ id_user: userId, id_post: postId })
-        return result
+
+    public async postComments(id: string | undefined) {
+        if (id) {
+            const result = await BaseDatabase.connection(`${PostDatabase.TABLE_POSTS} as p`)
+                .innerJoin("comments", "p.id_postComment", "=", "p.id_post")
+                .select("p.id_post as idPost",
+                    "p.id_creatorPost as idCreatorPost",
+                    "p.likes_post as likes",
+                    "p.dislikes_post as dislikes",
+                    "p.comments_post as comments",
+                    "comment.id_comment",
+                    "comment.id_creatorComment",
+                    "comment.content_comment")
+        }
     }
 
-    */
+
 }
 
 
