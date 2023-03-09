@@ -189,8 +189,7 @@ export class PostBusiness {
         if (postExistDB.id_creatorPost === userId) {
             throw new BadRequestError("Você não pode curtir seu proprio post")
         }
-        console.log("aaaaaaaaaa",checkLikeDislike)
-        console.log("bbbbbbbbbb",postExistDB)
+        
         if (checkLikeDislike.length >= 1) {
             if (checkLikeDislike[0].like_post === value) {
                 if (value === 1) {

@@ -1,15 +1,21 @@
 import express, { Request, Response } from 'express'
 import {
+    TCommenttRequest,
     TPostRequest,
 } from "../types"
 import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO, LikeDislikeInputDTO, PostDTO } from "../dto/postDTO";
 import { PostBusiness } from "../business/PostBusiness";
 import { BaseError } from '../erros/BaseError';
+import { CommentDTO, CreateCommentInputDTO, LikeDislikeCommentInputDTO } from '../dto/commentDTO';
+import { CommentBusiness } from '../business/CommentBusiness';
 
 export class PostContoller {
     constructor(
         private postDTO: PostDTO,
+        private commentDTO: CommentDTO,
+        private commentBusiness:CommentBusiness,
         private postBusiness: PostBusiness
+        
     ) { }
 
 
@@ -98,6 +104,47 @@ export class PostContoller {
                 token: req.headers.authorization
             }
             const output = await this.postBusiness.likeDislike(input)
+            res.status(200).send(output)
+        } catch (error) {
+            console.log(error)
+            if (error instanceof BaseError) {
+                res.status(error.statusCode).send(error.message)
+            } else {
+                res.send("Erro inesperado")
+            }
+        }
+    }
+
+
+    public createComment = async (req: Request, res: Response) => {
+        try {
+            const request = req.body as TCommenttRequest
+            const input: CreateCommentInputDTO = this.commentDTO.createPostInput(
+                req.params.id,
+                request.content,
+                req.headers.authorization as string)
+            const output = await this.commentBusiness.createComment(input)
+            res.status(201).send(output)
+        } catch (error) {
+            console.log(error)
+            if (error instanceof BaseError) {
+                res.status(error.statusCode).send(error.message)
+            } else {
+                res.send("Erro inesperado")
+            }
+        }
+    }
+
+
+    public likeDislikeComment = async (req: Request, res: Response) => {
+        try {
+            const input: LikeDislikeCommentInputDTO= {
+               commentId: req.params.id,
+                newLikeDislike: req.body.like,
+                token: req.headers.authorization
+            }
+            console.log("=========",input)
+            const output = await this.commentBusiness.likeDislikeComment(input)
             res.status(200).send(output)
         } catch (error) {
             console.log(error)
