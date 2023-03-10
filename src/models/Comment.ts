@@ -1,39 +1,50 @@
 import moment, { Moment } from 'moment'
 var date = Date.now()
 let dateNow = (moment(date)).format('YYYY-MM-DD HH:mm:ss')
-export class Post {
+export class Comment {
 
     constructor(
-        private id: string,
-        private creatorId: string,
-        private content: string,
+        private idComment: string,
+        private idCreatorComment: string,
+        private idPostComment: string,
+        private contentComment: string,
         private likes: number = 0,
         private dislikes: number = 0,
-        private commentsPost: number = 0,
         private createdAt: string = dateNow,
         private updatedAt: string = dateNow
     ) { }
 
-    public getId(): string {
-        return this.id
+    public getIdComment(): string {
+        return this.idComment
     }
-    public setId(value: string): void {
-        this.id = value
-    }
-
-    public getCreatorId(): string {
-        return this.creatorId
-    }
-    public setCreatorId(value: string): void {
-        this.creatorId = value
+    public setIdComment(value: string): void {
+        this.idComment = value
     }
 
-    public getContent(): string {
-        return this.content
+
+    public getIdCreatorComment(): string {
+        return this.idCreatorComment
     }
-    public setContent(value: string): void {
-        this.content = value
+    public setIdCreatorComment(value: string): void {
+        this.idCreatorComment = value
     }
+
+
+    public getIdPostComment(): string {
+        return this.idPostComment
+    }
+    public setIdPostComment(value: string): void {
+        this.idPostComment = value
+    }
+
+
+    public getContentComment(): string {
+        return this.contentComment
+    }
+    public setContentComment(value: string): void {
+        this.contentComment = value
+    }
+
 
     public getLikes(): number {
         return this.likes
@@ -42,6 +53,7 @@ export class Post {
         this.likes = value
     }
 
+
     public getDislikes(): number {
         return this.dislikes
     }
@@ -49,12 +61,6 @@ export class Post {
         this.dislikes = value
     }
 
-    public getCommentsPost(): number {
-        return this.commentsPost
-    }
-    public setCommentsPost(value: number): void {
-        this.commentsPost = value
-    }
 
     public getCreatedAt(): string {
         return this.createdAt
@@ -62,6 +68,7 @@ export class Post {
     public setCreatedAt(value: string): void {
         this.createdAt = value
     }
+
 
     public getUpdatedAt(): string {
         return this.updatedAt
