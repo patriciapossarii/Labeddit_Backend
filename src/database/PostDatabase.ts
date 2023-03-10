@@ -53,6 +53,14 @@ export class PostDatabase extends BaseDatabase {
         }
     }
 
+    public async postNickName(postId: string | undefined) {
+        const[ result] = await BaseDatabase.connection(`${PostDatabase.TABLE_POSTS} as p`)
+            .innerJoin("users as u", "p.id_creatorPost", "=", "u.id").select(
+                "u.nickname as nickname"
+            ).where({id_post:postId})
+        return result
+    }
+
 
     public async insertPost(newPostDB: PostDB) {
         await BaseDatabase

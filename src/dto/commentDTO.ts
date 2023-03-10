@@ -1,5 +1,5 @@
 import { BadRequestError } from "../erros/BadRequestError"
-import { PostComments } from "../types"
+
 
 export interface CreateCommentInputDTO {
     postId: string,
@@ -27,22 +27,40 @@ export interface GetCommentPostOutputDTO {
     content: string,
     likesDislikes: number,
     qtdComments: number,
-    comments: {
+    comments: [{
         idComment: string,
         nickname: string,
         contentComment: string,
-        likesDislikes: number,
-    }
+        likesDislikes: number
+    }]
 }
 
+
+
+export type TCommentPost = {
+    idComment: string,
+    nickname:string,
+    contentComment: string,
+    likesDislikes: number,
+
+}
+
+export interface PostComments {
+    idPost: string,
+    nickname:string,
+    content: string,
+    likesDislikes: number,
+    qtdComments: number,
+    comments: TCommentPost[]
+}
 export class CommentDTO {
 
     public getCommentPostInput(
-       postId: string,
+        postId: string,
         token: string
 
     ): GetCommentPostInputDTO {
-    
+
         const dto: GetCommentPostInputDTO = {
             postId,
             token
@@ -74,21 +92,25 @@ export class CommentDTO {
 
 
 
-    public getPostWithCommentsOutput(postWithComment:PostComments[]): GetCommentPostOutputDTO[] {
-        return postWithComment.map((post:any) => ({
-            idPost: post.idPost,
-            nickname: post.nicknameUserPost,
-            content:post.contentPost,
-            likesDislikes: post.likesPost - post.dislikesPost,
-            qtdComments:  post.qtdcommentsPost,
-            comments: {
-                idComment: post.idComment,
-                nickname: post.nicknamecomment,
-                contentComment: post.contentComment,
-                likesDislikes: post.likesComment - post.dislikesComment,
-            }
-        }))
+    public getPostWithCommentsOutput(
+        postComments: PostComments): PostComments {
+        const dto: PostComments = {
+            idPost: postComments.idPost,
+            nickname: postComments.nickname,
+            content: postComments.content,
+            likesDislikes: postComments.likesDislikes,
+            qtdComments: postComments.qtdComments,
+            comments: postComments.comments.map((comment) => ({
+                idComment: comment.idComment,
+                nickname: comment.nickname,
+                contentComment: comment.contentComment,
+                likesDislikes: comment.likesDislikes
+
+            }))
+        }
+        return dto
     }
 
 
 }
+

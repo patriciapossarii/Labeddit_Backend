@@ -139,7 +139,7 @@ export class PostContoller {
     public likeDislikeComment = async (req: Request, res: Response) => {
         try {
             const input: LikeDislikeCommentInputDTO= {
-               commentId: req.params.id,
+               commentId: req.params.idComment,
                 newLikeDislike: req.body.like,
                 token: req.headers.authorization
             }
@@ -163,7 +163,7 @@ export class PostContoller {
                 postId: req.params.id,
                 token: req.headers.authorization
             }
-            console.log("========================",request)
+           
             const input = this.commentDTO.getCommentPostInput(request.postId, request.token as string)
             const output = await this.commentBusiness.getCommentsPosts(input)
             res.status(200).send(output)

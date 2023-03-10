@@ -4,11 +4,8 @@ import { CommentDTO, CreateCommentInputDTO, GetCommentPostInputDTO, LikeDislikeC
 import { BadRequestError } from "../erros/BadRequestError"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { CommentDB, PostComments, USER_ROLES } from "../types"
+import { CommentDB, PostComments, TCommentPost, USER_ROLES } from "../types"
 import { Comment } from "../models/Comment"
-
-
-
 
 export class CommentBusiness {
     constructor(
@@ -26,29 +23,32 @@ export class CommentBusiness {
         if (payload === null) {
             throw new BadRequestError("'token' invalido")
         }
-        const result: PostComments[] = []
-        const posts = await this.commentDatabase.postComments(postId)
-     
-        
-        for (let post of posts) {
+        const result: TCommentPost[] = []
+        const post = await this.postDatabase.findPostById(postId)
+        const nickNamePost = await this.postDatabase.postNickName(postId)
+        const comments = await this.commentDatabase.nickNamePostComments(postId)
 
-            let postWithComment = {
-                idPost: post.idPost,
-                nickname: post.nicknameUserPost,
-                content:post.contentPost,
-                likesDislikes: post.likesPost - post.dislikesPost,
-                qtdComments:  post.qtdcommentsPost,
-                comments: [{
-                    idComment: post.idComment,
-                    nickname: post.nicknamecomment,
-                    contentComment: post.contentComment,
-                    likesDislikes: post.likesComment - post.dislikesComment,
-                }]
-            }
-            result.push(postWithComment)
-        }
-        const output = this.commentDTO.getPostWithCommentsOutput(posts)
         
+        for (let comment of comments) {
+            let comments = {
+                idComment: comment.idComment,
+                nickname: comment.nicknamecomment,
+                contentComment: comment.contentComment,
+                likesDislikes: comment.likesComment - comment.dislikesComment
+            }
+            result.push(comments)
+        }
+
+        let postWithComment: PostComments = {
+            idPost: post.id_post,
+            nickname: nickNamePost.nickname,
+            content: post.content_post,
+            likesDislikes: post.likes_post - post.dislikes_post,
+            qtdComments: post.comments_post,
+            comments: result
+        }
+
+        const output = this.commentDTO.getPostWithCommentsOutput(postWithComment)
         return output
     }
 
@@ -114,7 +114,9 @@ export class CommentBusiness {
             throw new BadRequestError("Acesso Negado! Seu acesso é de usuário")
         }
         const userId = payload?.id as string
+        console.log("AQUIIIIIIIIIIIIIIIIIII",commentId)
         const commentExistDB = await this.commentDatabase.findCommentById(commentId)
+        console.log("AQUIIIIIIIIIIIIIIIIIII",commentExistDB)
         if (!commentExistDB) {
             throw new BadRequestError("'id' do comentário não existe")
         }
@@ -126,6 +128,7 @@ export class CommentBusiness {
             value = 1
         }
         const checkLikeDislikeComment = await this.commentDatabase.checkCommentWithLike(userId, commentId)
+        
         if (commentExistDB.id_creatorComment === userId) {
             throw new BadRequestError("Você não pode curtir seu proprio post")
         }
@@ -166,7 +169,10 @@ export class CommentBusiness {
             }
             await this.commentDatabase.updateComment(commentExistDB)
 
+            
         }
+
+        
         const output = {
             message: "Like / Dislike editado com sucesso",
         }
