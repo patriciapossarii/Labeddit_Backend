@@ -67,6 +67,11 @@ WHERE id = "a3aba438-90cf-4720-9905-ce09a54e531a";
 UPDATE posts
 SET likes_post = 0
 WHERE id_post = "f742de23-fd87-486a-8397-b95cdc778f90";
+
+UPDATE comments
+set likes_comment = 0
+WHERE id_comment ="6842aaac-b6b0-4e6a-a751-9924f0b6e699";
+
 --   DROP Table posts;
 --drop table comments;
 SELECT *

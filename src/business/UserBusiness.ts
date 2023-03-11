@@ -27,7 +27,7 @@ export class UserBusiness {
         if (payload.role !== USER_ROLES.ADMIN) {
             throw new BadRequestError("Acesso Negado! Seu acesso é de usuário")
         }
-        const teste = await this.userDatabase.findUsers(q)
+        const teste= await this.userDatabase.findUsers(q)
         const users: User[] = teste.map((userDB) => new User(
             userDB.id,
             userDB.nickname,
