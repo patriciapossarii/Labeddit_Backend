@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express'
 import {
-    TCommenttRequest,
-    TCommenttRequest,
+      TCommenttRequest,
     TPostRequest,
 } from "../types"
 import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO, LikeDislikeInputDTO, PostDTO } from "../dto/postDTO";
@@ -13,8 +12,6 @@ import { CommentBusiness } from '../business/CommentBusiness';
 export class PostContoller {
     constructor(
         private postDTO: PostDTO,
-        private commentDTO: CommentDTO,
-        private commentBusiness:CommentBusiness,
         private commentDTO: CommentDTO,
         private commentBusiness:CommentBusiness,
         private postBusiness: PostBusiness
