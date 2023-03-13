@@ -7,7 +7,7 @@ import { PostDatabase } from "../database/PostDatabase"
 import { UserDatabase } from "../database/UserDatabase"
 import { CommentDTO } from "../dto/commentDTO"
 
-import { PostDTO } from "../dto/PostDTO"
+import { PostDTO } from "../dto/postDTO"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
 
