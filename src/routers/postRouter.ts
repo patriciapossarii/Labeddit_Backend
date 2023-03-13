@@ -1,10 +1,13 @@
 import express from "express"
 import { CommentBusiness } from "../business/CommentBusiness"
+import { CommentBusiness } from "../business/CommentBusiness"
 import { PostBusiness } from "../business/PostBusiness"
 import { PostContoller } from "../contoller/PostController"
 import { CommentDatabase } from "../database/CommentDatabase"
+import { CommentDatabase } from "../database/CommentDatabase"
 import { PostDatabase } from "../database/PostDatabase"
 import { UserDatabase } from "../database/UserDatabase"
+import { CommentDTO } from "../dto/commentDTO"
 import { CommentDTO } from "../dto/commentDTO"
 import { PostDTO } from "../dto/PostDTO"
 import { IdGenerator } from "../services/IdGenerator"
@@ -27,6 +30,7 @@ const postController = new PostContoller(
         new PostDatabase(),
         new IdGenerator(),
         new TokenManager()
+
 
     )
 )
