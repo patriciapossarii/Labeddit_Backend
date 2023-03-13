@@ -1,12 +1,13 @@
 import express, { Request, Response } from 'express'
 import {
     TCommenttRequest,
+    TCommenttRequest,
     TPostRequest,
 } from "../types"
 import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO, LikeDislikeInputDTO, PostDTO } from "../dto/postDTO";
 import { PostBusiness } from "../business/PostBusiness";
 import { BaseError } from '../erros/BaseError';
-import { CommentDTO, CreateCommentInputDTO, LikeDislikeCommentInputDTO } from '../dto/commentDTO';
+import { CommentDTO, CreateCommentInputDTO, GetCommentPostInputDTO, LikeDislikeCommentInputDTO } from '../dto/commentDTO';
 import { CommentBusiness } from '../business/CommentBusiness';
 
 export class PostContoller {
@@ -14,7 +15,10 @@ export class PostContoller {
         private postDTO: PostDTO,
         private commentDTO: CommentDTO,
         private commentBusiness:CommentBusiness,
+        private commentDTO: CommentDTO,
+        private commentBusiness:CommentBusiness,
         private postBusiness: PostBusiness
+        
         
     ) { }
 
@@ -139,12 +143,33 @@ export class PostContoller {
     public likeDislikeComment = async (req: Request, res: Response) => {
         try {
             const input: LikeDislikeCommentInputDTO= {
-               commentId: req.params.id,
+               commentId: req.params.idComment,
                 newLikeDislike: req.body.like,
                 token: req.headers.authorization
             }
-            console.log("=========",input)
+            
             const output = await this.commentBusiness.likeDislikeComment(input)
+            res.status(200).send(output)
+        } catch (error) {
+            console.log(error)
+            if (error instanceof BaseError) {
+                res.status(error.statusCode).send(error.message)
+            } else {
+                res.send("Erro inesperado")
+            }
+        }
+    }
+
+
+    public getCommentsPosts = async (req: Request, res: Response) => {
+        try {
+            const request: GetCommentPostInputDTO = {
+                postId: req.params.id,
+                token: req.headers.authorization
+            }
+           
+            const input = this.commentDTO.getCommentPostInput(request.postId, request.token as string)
+            const output = await this.commentBusiness.getCommentsPosts(input)
             res.status(200).send(output)
         } catch (error) {
             console.log(error)

@@ -1,17 +1,15 @@
 import { CommentDatabase } from "../database/CommentDatabase"
 import { PostDatabase } from "../database/PostDatabase"
-import { CreateCommentInputDTO, LikeDislikeCommentInputDTO } from "../dto/commentDTO"
+import { CommentDTO, CreateCommentInputDTO, GetCommentPostInputDTO, LikeDislikeCommentInputDTO } from "../dto/commentDTO"
 import { BadRequestError } from "../erros/BadRequestError"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { CommentDB, USER_ROLES } from "../types"
+import { CommentDB, PostComments, TCommentPost, USER_ROLES } from "../types"
 import { Comment } from "../models/Comment"
-
-
-
 
 export class CommentBusiness {
     constructor(
+        private commentDTO: CommentDTO,
         private commentDatabase: CommentDatabase,
         private postDatabase: PostDatabase,
         private idGenerator: IdGenerator,
@@ -19,7 +17,40 @@ export class CommentBusiness {
     ) { }
 
 
-    
+    public getCommentsPosts = async (input: GetCommentPostInputDTO) => {
+        const { postId, token } = input
+        const payload = this.tokenManager.getPayload(token as string)
+        if (payload === null) {
+            throw new BadRequestError("'token' invalido")
+        }
+        const result: TCommentPost[] = []
+        const post = await this.postDatabase.findPostById(postId)
+        const nickNamePost = await this.postDatabase.postNickName(postId)
+        const comments = await this.commentDatabase.nickNamePostComments(postId)
+
+        
+        for (let comment of comments) {
+            let comments = {
+                idComment: comment.idComment,
+                nickname: comment.nicknamecomment,
+                contentComment: comment.contentComment,
+                likesDislikes: comment.likesComment - comment.dislikesComment
+            }
+            result.push(comments)
+        }
+
+        let postWithComment: PostComments = {
+            idPost: post.id_post,
+            nickname: nickNamePost.nickname,
+            content: post.content_post,
+            likesDislikes: post.likes_post - post.dislikes_post,
+            qtdComments: post.comments_post,
+            comments: result
+        }
+
+        const output = this.commentDTO.getPostWithCommentsOutput(postWithComment)
+        return output
+    }
 
 
     public createComment = async (input: CreateCommentInputDTO) => {
@@ -61,9 +92,9 @@ export class CommentBusiness {
             created_at: newComment.getCreatedAt(),
         }
 
-        postExistDB.comments_post = postExistDB.comments_post +1
+        postExistDB.comments_post = postExistDB.comments_post + 1
         await this.commentDatabase.insertCommentInComments(newCommentDB)
-        
+
         await this.postDatabase.updatePost(postExistDB)
         const output = {
             message: "Comentário registrado com sucesso",
@@ -83,7 +114,9 @@ export class CommentBusiness {
             throw new BadRequestError("Acesso Negado! Seu acesso é de usuário")
         }
         const userId = payload?.id as string
+        console.log("AQUIIIIIIIIIIIIIIIIIII",commentId)
         const commentExistDB = await this.commentDatabase.findCommentById(commentId)
+        console.log("AQUIIIIIIIIIIIIIIIIIII",commentExistDB)
         if (!commentExistDB) {
             throw new BadRequestError("'id' do comentário não existe")
         }
@@ -95,29 +128,30 @@ export class CommentBusiness {
             value = 1
         }
         const checkLikeDislikeComment = await this.commentDatabase.checkCommentWithLike(userId, commentId)
+        
         if (commentExistDB.id_creatorComment === userId) {
             throw new BadRequestError("Você não pode curtir seu proprio post")
         }
-        
+
         if (checkLikeDislikeComment.length >= 1) {
             if (checkLikeDislikeComment[0].like_comment === value) {
                 if (value === 1) {
-                    commentExistDB.likes_comment= commentExistDB.likes_comment - 1
+                    commentExistDB.likes_comment = commentExistDB.likes_comment - 1
                 } else {
-                    commentExistDB.dislikes_comment  = commentExistDB.dislikes_comment  - 1
+                    commentExistDB.dislikes_comment = commentExistDB.dislikes_comment - 1
                 }
                 await this.commentDatabase.removeLikeDislike(userId, commentId)
                 await this.commentDatabase.updateComment(commentExistDB)
             } else {
                 if (checkLikeDislikeComment[0].like_comment === 1) {
-                    commentExistDB.dislikes_comment  = commentExistDB.dislikes_comment  + 1
-                    commentExistDB.likes_comment  = commentExistDB.likes_comment  - 1
+                    commentExistDB.dislikes_comment = commentExistDB.dislikes_comment + 1
+                    commentExistDB.likes_comment = commentExistDB.likes_comment - 1
 
                 } else {
-                    if (commentExistDB.dislikes_comment  >= 1) {
-                        commentExistDB.dislikes_comment  = commentExistDB.dislikes_comment  - 1
-                        commentExistDB.likes_comment  = commentExistDB.likes_comment + 1
-                    }
+
+                    commentExistDB.dislikes_comment = commentExistDB.dislikes_comment - 1
+                    commentExistDB.likes_comment = commentExistDB.likes_comment + 1
+
                     await this.commentDatabase.updatetLikeDislike(value, userId, commentId)
                     await this.commentDatabase.updateComment(commentExistDB)
 
@@ -128,14 +162,17 @@ export class CommentBusiness {
         } else {
             await this.commentDatabase.insertLikeDislike(userId, commentId, value)
             if (value === 1) {
-                commentExistDB.likes_comment  = commentExistDB.likes_comment  + 1
+                commentExistDB.likes_comment = commentExistDB.likes_comment + 1
             } else {
-                commentExistDB.dislikes_comment = commentExistDB.dislikes_comment  + 1
+                commentExistDB.dislikes_comment = commentExistDB.dislikes_comment + 1
 
             }
             await this.commentDatabase.updateComment(commentExistDB)
 
+            
         }
+
+        
         const output = {
             message: "Like / Dislike editado com sucesso",
         }

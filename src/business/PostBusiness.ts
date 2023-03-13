@@ -31,6 +31,7 @@ export class PostBusiness {
                 content: post.content,
                 likes: post.likes,
                 dislikes: post.dislikes,
+                likesDislikes:post.likes - post.dislikes,
                 comments: post.comments,
                 createdAt: post.createdAt,
                 updatedAt: post.updateAt,

@@ -32,6 +32,13 @@ export class CommentDatabase extends BaseDatabase {
         return result
     }
 
+
+    public async findCommentsByPostId(postId: string | undefined) {
+        const [result]: CommentDB[] = await BaseDatabase.connection(CommentDatabase.TABLE_COMMENTS)
+            .where({ id_postComment: postId })
+        return result
+    }
+
     public async removeLikeDislike(userId: string, commentId: string) {
         const result = await BaseDatabase.connection(CommentDatabase.TABLE_LIKES_DISLIKES_COMMENT)
             .delete().where({ id_user: userId, id_comment: commentId })
@@ -58,23 +65,61 @@ export class CommentDatabase extends BaseDatabase {
     }
 
 
-    public async postComments(id: string | undefined) {
-        if (id) {
-            const result = await BaseDatabase.connection(`${PostDatabase.TABLE_POSTS} as p`)
-                .innerJoin("comments", "p.id_postComment", "=", "p.id_post")
-                .select("p.id_post as idPost",
-                    "p.id_creatorPost as idCreatorPost",
-                    "p.likes_post as likes",
-                    "p.dislikes_post as dislikes",
-                    "p.comments_post as comments",
-                    "comment.id_comment",
-                    "comment.id_creatorComment",
-                    "comment.content_comment")
-        }
+    public async postComments(idP: string | undefined) {
+        const result = await BaseDatabase.connection(`${PostDatabase.TABLE_POSTS} as p`)
+            .leftJoin("users as u", "p.id_creatorPost", "=", "u.id")
+            .select(
+                "p.id_post as idPost",
+                "p.content_post as contentPost",
+                "p.likes_post as likesPost",
+                "p.dislikes_post as dislikesPost",
+                "p.comments_post as qtdcommentsPost",
+                "u.id as idUserPost",
+                "u.nickname as nicknameUserPost")
+            .leftJoin("comments as c", "p.id_post", "=", "c.id_postComment")
+            .select(
+                "c.id_comment as idComment",
+                "c.content_comment as contentComment",
+                "c.likes_comment as likesComment",
+                "c.dislikes_comment as dislikesComment",
+            )
+            .leftJoin("users as u2", "u2.id", "=", "c.id_creatorComment")
+            .select(
+                " u2.nickname as nicknamecomment"
+
+            ).where({ id_post: idP })
+        return result
     }
+
+
+   /* public async nickNamePostComments(postId: string | undefined) {
+        const result = await BaseDatabase.connection(`${CommentDatabase.TABLE_COMMENTS} as c`)
+            .leftJoin("users as u", "c.id_creatorComment", "=", "u.id")
+            .select(
+                "u.nickname as nicknameUserComment")
+           .where({  id_postComment: postId})
+        return result
+    }
+*/
+    public async nickNamePostComments(idP: string | undefined) {
+        const result = await BaseDatabase.connection(`${PostDatabase.TABLE_POSTS} as p`)
+            
+            .leftJoin("comments as c", "p.id_post", "=", "c.id_postComment")
+            .select(
+                "c.id_comment as idComment",
+                "c.content_comment as contentComment",
+                "c.likes_comment as likesComment",
+                "c.dislikes_comment as dislikesComment",
+            )
+            .leftJoin("users as u2", "u2.id", "=", "c.id_creatorComment")
+            .select(
+                " u2.nickname as nicknamecomment"
+
+            ).where({ id_post: idP })
+        return result
 
 
 }
 
 
-
+}

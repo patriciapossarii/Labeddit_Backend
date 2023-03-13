@@ -12,7 +12,8 @@ export interface GetPostsOutputDTO {
     content: string,
     likes: number,
     dislikes: number,
-    comments:number,
+    likesDislikes: number,
+    comments: number,
     createdAt: string,
     updatedAt: string
     creator: {
@@ -70,7 +71,8 @@ export class PostDTO {
             content: post.content,
             likes: post.likes,
             dislikes: post.dislikes,
-            comments:post.comments,
+            likesDislikes: post.likes - post.dislikes,
+            comments: post.comments,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
             creator: {

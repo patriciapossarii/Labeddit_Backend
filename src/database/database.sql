@@ -32,12 +32,9 @@ CREATE TABLE comments(
     content_comment TEXT NOT NULL,
     likes_comment INTEGER DEFAULT (0) NOT NULL,
     dislikes_comment INTEGER DEFAULT (0) NOT NULL,
-    updated_at TEXT DEFAULT (DATETIME()) NOT NULL,
-    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
      FOREIGN KEY ( id_creatorComment) REFERENCES users(id),
      FOREIGN KEY ( id_postComment) REFERENCES posts(id_post)
 );
-
 CREATE TABLE likes_dislikes_comment(
     id_user TEXT NOT NULL,
     id_comment TEXT NOT NULL,
@@ -45,14 +42,12 @@ CREATE TABLE likes_dislikes_comment(
     FOREIGN KEY (id_user) REFERENCES users(id),
     FOREIGN KEY (id_comment) REFERENCES comments(id_comment)
 );
-
-
 INSERT INTO users (id, nikname, email, password)
 VALUES
 	("f001", "Fulano", "fulano@email.com", "fulano123"),
 	("f002", "Beltrana", "beltrana@email.com", "beltrana00");
 
-    SELECT * FROM users;
+    SELECT * FROM posts;
     SELECT * from likes_dislikes_post;
 
 
@@ -65,13 +60,9 @@ VALUES
      SET likes_post = 0
      WHERE id_post ="350845b4-79c5-45d8-a4c6-e8431c37433e";
 
+UPDATE comments
+set likes_comment = 0
+WHERE id_comment ="6842aaac-b6b0-4e6a-a751-9924f0b6e699";
 
-  --   DROP Table posts;
-
---drop table comments;
-
-SELECT * FROM comments;
-SELECT * FROM posts;
-
-SELECT * FROM likes_dislikes_comment;
+     --DROP Table users;
 

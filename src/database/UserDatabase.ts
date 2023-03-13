@@ -4,7 +4,7 @@ import { BaseDatabase } from "./BaseDatabase";
 export class UserDatabase extends BaseDatabase {
     public static TABLE_USERS = "users"
 
-    public async findUsers(q: string | undefined) {
+    public async findUsers(q: string | undefined):Promise<UserDB[] >{
         if (q) {
             const result: UserDB[] = await BaseDatabase
                 .connection(UserDatabase.TABLE_USERS)
@@ -18,13 +18,9 @@ export class UserDatabase extends BaseDatabase {
     }
 
 
-    public async checkEmailUserExist(email: string) {
-        let usersDB
-        const result = await BaseDatabase
-            .connection(UserDatabase.TABLE_USERS)
-            .where({ email: email })
-        usersDB = result
-        return usersDB
+    public async checkEmailUserExist(email: string) : Promise<UserDB[]>{
+       return await BaseDatabase
+            .connection(UserDatabase.TABLE_USERS).where({ email })   
     }
 
 
@@ -34,7 +30,7 @@ export class UserDatabase extends BaseDatabase {
             .insert(newUserDB)
     }
 
-    public findEmail = async (email: string) => {
+    public findEmail = async (email: string): Promise<UserDB | undefined> => {
         const result: UserDB[] = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             .select()
